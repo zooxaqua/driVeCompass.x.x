@@ -1,0 +1,19 @@
+{
+  "meta": {
+    "suite": "integration",
+    "version": "v2-full-matrix"
+  },
+  "cases": [
+    { "id": "ITC-01", "type": "route_compare_success" },
+    { "id": "ITC-02", "type": "fuel_points_complete" },
+    { "id": "ITC-03", "type": "experience_value_success" },
+    { "id": "ITC-04", "type": "phase_flag_control" },
+    { "id": "ITC-05", "type": "retry_update_success" },
+    { "id": "ITC-06", "type": "input_validation_error" },
+    { "id": "ITC-07", "type": "route_timeout_partial" },
+    { "id": "ITC-08", "type": "toll_missing_continue" },
+    { "id": "ITC-09", "type": "midway_price_missing" },
+    { "id": "ITC-10", "type": "experience_unavailable" },
+    { "id": "ITC-11", "type": "internal_exception_trace" }
+  ]
+}

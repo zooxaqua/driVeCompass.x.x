@@ -1,0 +1,20 @@
+{
+  "meta": {
+    "suite": "system",
+    "version": "v2-full-matrix"
+  },
+  "cases": [
+    { "id": "STC-01", "type": "route_compare_e2e" },
+    { "id": "STC-02", "type": "fuel_price_three_points" },
+    { "id": "STC-03", "type": "experience_value_e2e" },
+    { "id": "STC-04", "type": "phase_control_e2e" },
+    { "id": "STC-05", "type": "retry_flow_e2e" },
+    { "id": "STC-06", "type": "traceability_e2e" },
+    { "id": "STC-07", "type": "input_invalid_e2e" },
+    { "id": "STC-08", "type": "route_failure_continue" },
+    { "id": "STC-09", "type": "toll_missing_continue" },
+    { "id": "STC-10", "type": "one_price_missing_continue" },
+    { "id": "STC-11", "type": "experience_unavailable_e2e" },
+    { "id": "STC-12", "type": "partial_retry_traceability" }
+  ]
+}

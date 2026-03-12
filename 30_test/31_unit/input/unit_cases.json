@@ -1,0 +1,13 @@
+{
+  "fuelCost": {
+    "distanceKm": 120,
+    "fuelEfficiencyKmL": 15,
+    "fuelPriceYenPerL": 170,
+    "expectedFuelCostYen": 1360
+  },
+  "experience": {
+    "fastestCostYen": 6000,
+    "candidateCostYen": 3500,
+    "expectedDiffYen": 2500
+  }
+}

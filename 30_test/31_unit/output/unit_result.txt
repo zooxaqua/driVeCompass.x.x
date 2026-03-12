@@ -1,0 +1,8 @@
+[UNIT] start
+PASS calculateFuelCost normal
+PASS calculateFuelCost abnormal
+PASS buildRouteComparisons normal
+PASS mapToComparisonCards normal
+PASS buildExperienceValue normal
+PASS buildExperienceValue abnormal
+[UNIT] all pass
