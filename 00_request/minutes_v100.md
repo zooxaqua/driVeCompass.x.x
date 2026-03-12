@@ -106,26 +106,26 @@
 7. リリース - 
 
 ## 10. フォルダ構成
-README.md : リードミー
-HOWTOUSE.md : ユーザ向けの使い方
-.github : エージェント定義など
-00_request : 議事録、要求
-10_bug : バグ情報
-20_project : プロジェクト全体
-            - 21_document : 各エージェントの成果物。エージェントごとにフォルダを作成する
-            - 22_src
-                - front : フロントエンドのソース
-                - back : バックエンドのソース
-30_test : 
-            - 31_unit : 単体テスト
-                - input: 入力情報と期待値
-                - logic:テスト実施用のロジック
-                - output:テスト結果
-            - 32_integration : 結合テスト
-                - input: 入力情報と期待値
-                - logic:テスト実施用のロジック
-                - output:テスト結果
-            - 33_system : システムテスト
-                - input: 入力情報と期待値
-                - logic:テスト実施用のロジック
-                - output:テスト結果
+README.md : リードミー  
+HOWTOUSE.md : ユーザ向けの使い方  
+.github : エージェント定義など  
+00_request : 議事録、要求  
+10_bug : バグ情報  
+20_project : プロジェクト全体  
+            - 21_document : 各エージェントの成果物。エージェントごとにフォルダを作成する  
+            - 22_src  
+                - front : フロントエンドのソース  
+                - back : バックエンドのソース  
+30_test :   
+            - 31_unit : 単体テスト  
+                - input: 入力情報と期待値  
+                - logic:テスト実施用のロジック  
+                - output:テスト結果  
+            - 32_integration : 結合テスト  
+                - input: 入力情報と期待値  
+                - logic:テスト実施用のロジック  
+                - output:テスト結果  
+            - 33_system : システムテスト  
+                - input: 入力情報と期待値  
+                - logic:テスト実施用のロジック  
+                - output:テスト結果  
