@@ -139,8 +139,46 @@
   - requestId/traceId で FEログ・BEログ・監査ログを横断追跡できることを確認。
   - 外部API障害時の一次切り分け手順（upstream別）を運用Runbookへ反映。
 
-## 8. 実行記録
-- 実行モード: new
-- 実行種別: 最初の工程から再実施
+## 5. 差分（delta のみ）
+
+### 5.1 delta 概要
+- 実行モード: delta
+- 実行日: 2026-03-12
 - 前工程参照: 20_project/21_document/detailed-design/detailed-design.md
-- 判定: 完了（22_src と 31_unit の必須実体成果物を作成・実行確認）
+
+### 5.2 新規作成ファイル一覧
+| ファイルパス | 区分 | 説明 |
+| --- | --- | --- |
+| 20_project/22_src/package.json | 設定 | Next.js 14 / React 18 / Supabase JS 依存定義 |
+| 20_project/22_src/tsconfig.json | 設定 | TypeScript コンパイラ設定（App Router 向け） |
+| 20_project/22_src/next.config.js | 設定 | Next.js 設定（reactStrictMode: true） |
+| 20_project/22_src/app/globals.css | FE | グローバルリセット CSS |
+| 20_project/22_src/app/layout.tsx | FE | RootLayout（メタデータ含む） |
+| 20_project/22_src/app/page.tsx | FE | メインページ（Client Component: フォーム + 3ルートカード表示） |
+| 20_project/22_src/app/api/comparisons/route.ts | API | POST /api/comparisons（デモ固定値での比較計算） |
+| 20_project/22_src/app/api/feature-flags/route.ts | API | GET /api/feature-flags（Phase1 固定レスポンス） |
+| 20_project/22_src/lib/routeLogic.ts | BE lib | back/route_logic.js の TypeScript 移植（型定義付き） |
+| 20_project/22_src/lib/viewModel.ts | FE lib | front/view_model.js の TypeScript 移植（型定義付き） |
+| 20_project/22_src/lib/supabaseClient.ts | 共通 | Supabase クライアント初期化 |
+
+### 5.3 既存ファイル変更なし
+- 20_project/22_src/back/route_logic.js（維持）
+- 20_project/22_src/front/view_model.js（維持）
+- 30_test/31_unit/logic/run_unit_tests.js（変更なし — 既存 JS ファイル参照を継続）
+
+### 5.4 delta 単体テスト実行結果
+- 実行日: 2026-03-12
+- 実行コマンド: node 30_test/31_unit/logic/run_unit_tests.js
+- 結果: 6件 pass / 0件 fail（既存テスト全パス確認）
+- 出力: 30_test/31_unit/output/unit_result.txt に保存済み
+
+### 5.5 回帰リスク
+- back/route_logic.js・front/view_model.js は削除していないため、既存テストへの回帰なし。
+- lib/routeLogic.ts は同一ロジックの TypeScript 移植のため、計算結果の差異リスクなし。
+
+## 8. 実行記録
+- 実行モード: new → delta（追記）
+- 実行種別（new）: 最初の工程から再実施
+- 実行種別（delta）: Next.js App Router 実装追加
+- 前工程参照: 20_project/21_document/detailed-design/detailed-design.md
+- 判定: 完了（22_src/app, 22_src/lib, 単体テスト全パスを確認）

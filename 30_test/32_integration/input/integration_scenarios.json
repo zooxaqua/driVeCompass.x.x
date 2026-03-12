@@ -14,6 +14,9 @@
     { "id": "ITC-08", "type": "toll_missing_continue" },
     { "id": "ITC-09", "type": "midway_price_missing" },
     { "id": "ITC-10", "type": "experience_unavailable" },
-    { "id": "ITC-11", "type": "internal_exception_trace" }
+    { "id": "ITC-11", "type": "internal_exception_trace" },
+    { "id": "ITC-12", "type": "nextjs_required_files" },
+    { "id": "ITC-13", "type": "route_handler_integration" },
+    { "id": "ITC-14", "type": "viewmodel_integration" }
   ]
 }

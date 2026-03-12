@@ -1,7 +1,7 @@
 {
   "meta": {
     "suite": "system",
-    "version": "v2-full-matrix"
+    "version": "v3-delta-v110"
   },
   "cases": [
     { "id": "STC-01", "type": "route_compare_e2e" },
@@ -15,6 +15,9 @@
     { "id": "STC-09", "type": "toll_missing_continue" },
     { "id": "STC-10", "type": "one_price_missing_continue" },
     { "id": "STC-11", "type": "experience_unavailable_e2e" },
-    { "id": "STC-12", "type": "partial_retry_traceability" }
+    { "id": "STC-12", "type": "partial_retry_traceability" },
+    { "id": "STC-13", "type": "vercel_deploy_pre_check",    "req": "REQ-12", "ac": "AC-10" },
+    { "id": "STC-14", "type": "app_router_structure_check", "req": "REQ-13", "ac": "AC-11" },
+    { "id": "STC-15", "type": "e2e_config_coherence",       "req": "REQ-12,REQ-13" }
   ]
 }

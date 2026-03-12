@@ -123,6 +123,50 @@ function executeCase(testCase) {
       assert.ok(captured.traceId.length > 0);
       return;
     }
+    case "nextjs_required_files": {
+      const srcBase = path.resolve(__dirname, "../../../20_project/22_src");
+      const required = ["package.json", "app/page.tsx", "next.config.js"];
+      required.forEach((f) => {
+        assert.ok(fs.existsSync(path.join(srcBase, f)), `Missing required file: ${f}`);
+      });
+      return;
+    }
+    case "route_handler_integration": {
+      // 正常系: buildRouteComparisons が 3 ルートを返却する
+      const routes = buildRouteComparisons({
+        baseDistanceKm: 180,
+        baseDurationMin: 200,
+        fuelEfficiencyKmL: 14,
+        fuelPriceYenPerL: 168
+      });
+      assert.strictEqual(routes.length, 3);
+      assert.ok(routes.every((r) => r.fuelCostYen > 0));
+      // 異常系: fuelEfficiencyKmL=0 で Error がスローされ 500 扱い
+      assert.throws(
+        () =>
+          buildRouteComparisons({
+            baseDistanceKm: 180,
+            baseDurationMin: 200,
+            fuelEfficiencyKmL: 0,
+            fuelPriceYenPerL: 168
+          }),
+        /fuelEfficiencyKmL must be greater than zero/
+      );
+      return;
+    }
+    case "viewmodel_integration": {
+      // 正常系: buildScreenModel が routes・fuelPrices・experienceValue を正しく変換
+      const payload = basePayload();
+      const screen = buildScreenModel(payload);
+      assert.strictEqual(screen.cards.length, 3);
+      assert.ok(screen.fuelPrices.every((p) => p.label.endsWith("円/L")));
+      assert.ok(screen.experience.length > 0);
+      // 異常系: fuelPrices が空オブジェクトの場合「未取得」表示に変換
+      const emptyPricePayload = { ...payload, fuelPrices: {} };
+      const screen2 = buildScreenModel(emptyPricePayload);
+      assert.ok(screen2.fuelPrices.every((p) => p.label === "未取得"));
+      return;
+    }
     default:
       throw new Error(`Unknown test type: ${testCase.type}`);
   }

@@ -3,15 +3,24 @@
 ## 1. 目的
 本ステージ（requirements）では、レジャー向け節約ドライブアプリ「ドライブ・コンパス」に対する要求を、基本設計で機能分解・責務分担できる粒度の要件へ整理する。特に、時間効率（タイパ）と移動コスト節約を同時比較できる体験を中核価値とし、正常系と異常系の双方を明示した要件として定義する。
 
+v110 差分の目的: フロントエンド実行環境を Vercel にデプロイ可能とするため、ソースコード配置を Next.js App Router 標準構成に移行する。既存ドメイン要件（REQ-01〜REQ-11）への機能的影響はないが、ディレクトリ構成・デプロイ設定・環境変数管理に関する要件（REQ-12・REQ-13）を新規追加する。
+
 ## 2. 入力
-- 入力資料: 00_request/minutes_v100.md
-- 開発モード: new（新規開発）
-- 前提ドメイン要件:
+- 入力資料（新規）: 00_request/minutes_v100.md
+- 入力資料（差分）: 00_request/minutes_v110.md
+- 開発モード: delta（差分開発）
+- 差分起点バージョン: v100 → v110
+- 前提ドメイン要件（v100 から継続）:
   - 3ルート比較（最速／賢く節約／完全節約）
   - 比較軸（料金／時間／燃料）
   - ガソリン価格3地点（出発地／途中／到着地）
   - 差額の体験価値化
   - 段階導入（MVP→拡張）
+- 追加前提（v110）:
+  - フロントエンド: Next.js（App Router）
+  - バックエンド: Supabase
+  - デプロイ先: Vercel（Root Directory = `20_project/22_src`）
+  - 環境変数: `.env.local`（ローカル）/ Vercel Environment Variables（本番）
 
 ## 3. 全体構成
 - 対象ステージ: requirements
@@ -21,9 +30,30 @@
   - データ要件（ルート、料金、燃料価格、算出結果）
   - 異常系要件（API失敗、データ未取得、入力不備）
   - 段階導入要件（MVPから段階拡張）
+  - デプロイ要件（Vercel 対応、Next.js App Router 標準構成）【v110追加】
 - トレーサビリティ方針:
   - 全要件にReq-IDを付与する
   - 正常系/異常系シナリオと受け入れ条件をReq-IDで対応づける
+- ソースコード配置（v110以降）:
+  ```
+  20_project/22_src/              ← Vercel Root Directory
+    app/
+      layout.tsx                  # 全ページ共通レイアウト
+      page.tsx                    # トップページ（/ アクセス）
+      globals.css
+      api/
+        comparisons/route.ts      # POST /api/comparisons
+        feature-flags/route.ts    # GET /api/feature-flags
+    components/                   # 再利用UIパーツ
+    lib/
+      supabaseClient.ts           # Supabase 接続設定
+    public/                       # 静的ファイル
+    .env.local                    # ローカル用環境変数（Git管理外）
+    next.config.js
+    package.json
+    tsconfig.json
+  ```
+  - v100 の `front/`・`back/` 構成は廃止
 
 ## 4. 詳細
 ### 4.1 要件一覧（Req-ID付き）
@@ -70,6 +100,20 @@
 - REQ-11 トレーサビリティ
   - 要件、シナリオ、受け入れ条件、次工程引き継ぎ項目をReq-IDで追跡可能にすること。
 
+- REQ-12 Vercel へのデプロイ対応【v110追加】
+  - `20_project/22_src` を Vercel の Root Directory に設定した際に、Next.js プロジェクトとして認識されること。
+  - `app/page.tsx`（トップページ）が存在し、`/` アクセスで 404 にならないこと。
+  - `package.json` に `next`・`react`・`react-dom` が依存パッケージとして含まれること。
+  - Supabase 接続情報（`NEXT_PUBLIC_SUPABASE_URL`・`NEXT_PUBLIC_SUPABASE_ANON_KEY`）を環境変数で取得し、`.env.local`（Git管理外）と Vercel Environment Variables の両方で設定可能であること。
+  - `.env.local` は `.gitignore` に追加され、GitHub へコミットされないこと。
+
+- REQ-13 Next.js App Router 標準ディレクトリ構成への準拠【v110追加】
+  - フロントエンドのページは `app/` 配下に配置すること（v100 の `front/` 廃止）。
+  - API（バックエンドロジック）は `app/api/` 配下の Route Handler（`route.ts`）として実装すること（v100 の `back/` 廃止）。
+  - 再利用 UI パーツは `components/` 配下、ユーティリティ（Supabase クライアント等）は `lib/` 配下に配置すること。
+  - 既存の `front/` `back/` ディレクトリは廃止し、Next.js 標準構成に統一すること。
+  - v100 の `route_logic.js`（back/）および `view_model.js`（front/）の責務は、それぞれ `app/api/` 配下の Route Handler と `app/` 配下のページ/コンポーネントに移行すること。
+
 ### 4.2 正常系シナリオ
 - SCN-N-01（対象: REQ-01, REQ-02, REQ-03）
   - 利用者が出発地と到着地を入力すると、3ルートが算出され、時間・高速料金・推定ガソリン代・合計移動コストが比較表示される。
@@ -82,6 +126,12 @@
 
 - SCN-N-04（対象: REQ-06）
   - フェーズ進行に従い、MVP機能から順次拡張機能が追加され、既存機能の表示整合性が維持される。
+
+- SCN-N-05（対象: REQ-12）【v110追加】
+  - `20_project/22_src` を Root Directory として Vercel にデプロイすると、Next.js プロジェクトとして認識され、ビルドが成功する。`/` アクセスで `app/page.tsx` が正常表示される。
+
+- SCN-N-06（対象: REQ-13）【v110追加】
+  - `app/page.tsx` でトップページが表示され、`app/api/comparisons/route.ts` への POST リクエストがルート比較結果を返す。Supabase クライアント（`lib/supabaseClient.ts`）が環境変数を読み込み、正常接続できる。
 
 ### 4.3 異常系シナリオ
 - SCN-E-01（対象: REQ-07）
@@ -98,6 +148,10 @@
 
 - SCN-E-05（対象: REQ-05, REQ-09）
   - 体験価値換算に必要な単価データが取得できない場合、差額金額のみ表示し、体験換算表示は抑止する。
+
+- SCN-E-06（対象: REQ-12）【v110追加】
+  - `NEXT_PUBLIC_SUPABASE_URL` または `NEXT_PUBLIC_SUPABASE_ANON_KEY` が未設定の場合、Supabase 接続処理は失敗し、利用者に接続エラーが通知される（環境変数未設定であることを開発者ログに出力）。
+  - `app/page.tsx` が存在しない状態でデプロイした場合、Vercel ビルドが失敗し 404 が発生する（ビルドエラーとして検知可能）。
 
 ### 4.4 受け入れ条件
 - AC-01（REQ-01, REQ-03）
@@ -127,6 +181,48 @@
 - AC-09（REQ-11）
   - 要件、シナリオ、受け入れ条件、引き継ぎ項目がReq-IDで相互参照できること。
 
+- AC-10（REQ-12）【v110追加】
+  - `20_project/22_src` を Vercel Root Directory として設定した場合にビルドが成功し、`/` アクセスで 404 が発生しないこと。
+  - `package.json` に `next`・`react`・`react-dom` が含まれること。
+  - `.env.local` が `.gitignore` に記載されており、GitHub リポジトリにコミットされないこと。
+  - `NEXT_PUBLIC_SUPABASE_URL` と `NEXT_PUBLIC_SUPABASE_ANON_KEY` をローカルおよび Vercel の両方で設定可能であること。
+
+- AC-11（REQ-13）【v110追加】
+  - ページコンポーネントが `app/` 配下に、API Route が `app/api/` 配下に配置されていること。
+  - v100 の `front/`・`back/` ディレクトリが廃止されていること。
+  - `route_logic.js` の責務が `app/api/` 配下の Route Handler に、`view_model.js` の責務が `app/` 配下のページ/コンポーネントに移行されていること。
+
+## 5. 差分（delta のみ）
+### 5.1 差分概要
+- 差分起点: v100 → v110
+- 差分内容: `22_src` ディレクトリ構成の変更（独自構成 → Next.js App Router 標準構成）
+- 変更種別: ディレクトリ構成の刷新 + デプロイ環境の追加
+
+### 5.2 変更内容詳細
+
+| 項目 | v100（変更前） | v110（変更後） |
+|------|---------------|---------------|
+| フロントエンド配置 | `22_src/front/` | `22_src/app/`（App Router 標準） |
+| バックエンド配置 | `22_src/back/` | `22_src/app/api/`（Route Handler） |
+| UIパーツ | 未整理 | `22_src/components/` |
+| ユーティリティ | 未整理 | `22_src/lib/` |
+| デプロイ設定 | なし | Vercel（Root Directory: `20_project/22_src`） |
+| 環境変数管理 | なし | `.env.local` / Vercel Environment Variables |
+| TypeScript設定 | なし | `tsconfig.json` |
+| Next.js設定 | なし | `next.config.js` |
+
+### 5.3 既存要件への影響
+
+| Req-ID | 影響 | 内容 |
+|--------|------|------|
+| REQ-01〜REQ-11 | 影響なし | ドメインロジック・表示要件に変更なし |
+| REQ-12 | 新規追加 | Vercel デプロイ対応要件 |
+| REQ-13 | 新規追加 | Next.js App Router 標準構成への準拠要件 |
+
+### 5.4 廃止事項
+- `22_src/front/view_model.js`: 廃止。責務を `app/` 配下のページ/コンポーネントに移行。
+- `22_src/back/route_logic.js`: 廃止。責務を `app/api/` 配下の Route Handler に移行。
+
 ## 6. 課題・リスク
 - 外部API依存リスク
   - ルート、料金、ガソリン価格の各データ取得先に障害や仕様変更が発生した場合、表示欠損や比較精度低下が生じる。
@@ -142,6 +238,15 @@
 
 - 段階導入時の後方互換
   - フェーズ拡張時に既存表示項目との整合が崩れると、比較体験の一貫性が損なわれる。
+
+- Vercel デプロイ設定リスク【v110追加】
+  - Vercel の Root Directory を `20_project/22_src` 以外に誤設定した場合、ビルドが失敗する。設定値は CI/CD ドキュメントで明文化する。
+
+- 環境変数漏洩リスク【v110追加】
+  - `.env.local` が誤って GitHub にコミットされると Supabase の接続情報が漏洩する。`.gitignore` への追加を必須要件とし、pre-commit フックによる検知も検討する。
+
+- Next.js バージョン固定リスク【v110追加】
+  - Next.js の破壊的変更（App Router 仕様変更等）により、Route Handler や `layout.tsx` の実装が影響を受ける可能性がある。`package.json` でバージョン範囲を明示的に管理する。
 
 ## 7. 次工程への引き継ぎ
 - 基本設計への分解単位
@@ -161,8 +266,25 @@
 - トレーサビリティ運用
   - 次工程成果物（基本設計書）でReq-IDを維持し、機能ID/画面ID/API-IDとの対応表を作成すること。
 
+- ディレクトリ構成移行の引き継ぎ【v110追加】
+  - 基本設計では `app/`・`components/`・`lib/` の責務分担を明確化し、各 Req-ID に対応するファイル配置先を指定すること。
+  - `app/api/` 配下の Route Handler（`route.ts`）のエンドポイント一覧を基本設計書に記載し、フロントエンド/バックエンドのI/F設計と接続すること。
+
+- Vercel デプロイ設定の引き継ぎ【v110追加】
+  - Root Directory（`20_project/22_src`）・環境変数キー名・`.gitignore` 設定を基本設計書または運用ドキュメントに記載すること。
+  - ローカル開発の `.env.local` と本番環境の Vercel Environment Variables の設定手順を明示すること。
+
 ## 8. 実行記録
-- 実行モード: new
-- 実行種別: 最初の工程から再実施
-- 入力: 00_request/minutes_v100.md
-- 判定: 完了（必須見出し・正常系/異常系・Req-IDを確認）
+- 実行モード: delta
+- 差分バージョン: v100 → v110
+- 入力（新規）: 00_request/minutes_v100.md
+- 入力（差分）: 00_request/minutes_v110.md
+- 差分内容:
+  - `22_src` を独自構成（`front/`・`back/`）から Next.js App Router 標準構成（`app/`・`components/`・`lib/`・`public/`・設定ファイル群）へ変更
+  - Vercel デプロイ対応（Root Directory: `20_project/22_src`）
+  - 環境変数管理（`.env.local` / Vercel Environment Variables）の要件化
+- 追加要件: REQ-12（Vercel デプロイ対応）、REQ-13（Next.js App Router 標準構成）
+- 追加シナリオ: SCN-N-05、SCN-N-06、SCN-E-06
+- 追加受け入れ条件: AC-10、AC-11
+- 廃止: `front/`・`back/` ディレクトリ構成（v100）
+- 判定: 完了（必須見出し・正常系/異常系・Req-ID・差分セクションを確認）
