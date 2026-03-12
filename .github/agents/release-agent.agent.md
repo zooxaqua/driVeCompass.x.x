@@ -1,7 +1,7 @@
 ---
 name: release-agent
-description: "最終成果物を確認し、リリース可否とリリースノートを作成します。Use when preparing release decision and handover documentation."
-argument-hint: "システムテスト結果、未解決課題、リリース条件"
+description: "最終成果物を確認し、リリース可否とリリースノートを作成します。Use when preparing release decision and handover documentation, including Vercel deployment readiness."
+argument-hint: "システムテスト結果、未解決課題、リリース条件、デプロイ先（Vercel）情報"
 tools: [read, edit, search]
 user-invocable: false
 ---
@@ -15,6 +15,11 @@ user-invocable: false
 - 判定根拠を明確化し、条件付き可否を許容する。
 - 未解決課題は影響と回避策をセットで記載する。
 - 差分開発では変更点サマリーとロールバック観点を含める。
+- デプロイ先が Vercel の場合、`release.md` の `## 4. 詳細` に以下を明記する。
+	- 対象環境（Preview/Production）
+	- デプロイ確認結果（URL または到達性確認結果）
+	- 必須環境変数の充足状況（不足時は No Go または Conditional Go）
+	- ロールバック手順（直前安定デプロイへの復帰方針）
 
 ## 必須見出しチェック
 成果物 `release.md` は以下の見出しを必須とする。
@@ -37,3 +42,4 @@ user-invocable: false
 2. 判定根拠
 3. リリースノート
 4. 未解決課題と運用注意点
+5. Vercel デプロイ運用メモ（対象環境・確認URL・ロールバック方針）

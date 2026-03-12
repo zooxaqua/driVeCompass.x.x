@@ -15,11 +15,12 @@ user-invocable: true
 
 ## 手順
 1. 実行モードを判定する（`new` / `delta`）。
-2. 対象工程の成果物テンプレートを [stage template](./assets/stage-output-template.md) から作成する。
-3. 前工程成果物をレビューし、欠落情報を [question template](./assets/back-question-template.md) で明示する。
-4. 回答・修正後、当該工程から再実行する。
-5. 完了時に次工程向け引き継ぎ事項を明記する。
-6. 工程完了後の自動起票は [auto bootstrap playbook](./assets/auto-bootstrap-playbook.md) に従う。
+2. デプロイ先・運用環境（例: Vercel Preview/Production）を入力から抽出し、全工程に引き継ぐ。
+3. 対象工程の成果物テンプレートを [stage template](./assets/stage-output-template.md) から作成する。
+4. 前工程成果物をレビューし、欠落情報を [question template](./assets/back-question-template.md) で明示する。
+5. 回答・修正後、当該工程から再実行する。
+6. 完了時に次工程向け引き継ぎ事項を明記する。
+7. 工程完了後の自動起票は [auto bootstrap playbook](./assets/auto-bootstrap-playbook.md) に従う。
 
 ## 成果物配置
 - `20_project/21_document/<stage>/<stage>.md`
@@ -31,3 +32,4 @@ user-invocable: true
 - delta モード時は差分セクションがある。
 - 次工程が迷わない引き継ぎ情報がある。
 - 要件IDまたは設計項目IDで追跡できる。
+- デプロイ先指定時は、release 工程で環境変数・到達性・ロールバック観点が追跡できる。
